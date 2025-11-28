@@ -14,24 +14,25 @@ import lombok.NoArgsConstructor;
 public class TabelaRotas {
     private List<Rota> rotas = new ArrayList<>();
 
+
     // INFO: metodo para adicionar uma rota na tabela de rotas
     public void adicionarRota(Rota novaRota) {
         this.rotas.add(novaRota);
-        System.out.println("\nRota: " + novaRota.getRotaDestino() + " adicionada com sucesso!");
+        System.out.println("\nNova rota adicionada!");
     }
 
-    // INFO: metodo q lista todas as rotas ou q a tabela esta vazia
+    // INFO: metodo de exibir a tabela toda
     public void exibirTabela() {
         if (rotas.isEmpty()) {
             System.out.println("Nenhuma rota cadastrada...");
         } else {
-            System.out.printf("%-18s | %-18s | %-18s | %-15s%n", "IP", "Gateway", "Mascara", "Interface");
-            for (Rota rota : rotas) {
-                System.out.printf("%-18s | %-18s | %-18s | %-15s%n", rota.getRotaDestino(), rota.getGateway(), rota.getMascara(), rota.getInterfaceFisica());
+            System.out.printf("%-18s | %-18s | %-18s | %-15s%n", "IP", "Máscara", "Gateway", "Interface");
+            for (Rota R : rotas) {
+                System.out.printf("%-18s | %-18s | %-18s | %-15s%n", R.getRotaDestino(), R.getMascara(), R.getGateway(), R.getInterfaceFisica());
             }
-        }   
+        }
+        
+
+    // TODO: fazer o metodo p/ apagar td a tabela
     }
-
-    // TODO: metodo q reseta a tabela - literalmente um delete em td
-
 }
