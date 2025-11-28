@@ -12,11 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class TabelaRotas {
-    private List<String> rotas = new ArrayList();
-
-
-
-
+    private List<String> rotas = new ArrayList<>();
 
     // INFO: metodo para adicionar uma rota na tabela de rotas
     public void adicionarRota(String rota) {
