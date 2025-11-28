@@ -19,4 +19,7 @@ public class TabelaRotas {
 
 
     // INFO: metodo para adicionar uma rota na tabela de rotas
+    public void adicionarRota(String rota) {
+        rotas.add(rota);
+    }
 }
