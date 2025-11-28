@@ -14,10 +14,12 @@ public class Rota {
     private String gateway;
     private String interfaceFisica;
 
+    @Override
     public String toString() {
+        // TODO: atualizar p/ ficar igual ao do prof
         return "Rota de Destino: " + rotaDestino
         + "\nMáscara: " + mascara
         + "\nGateway: " + gateway
-        +"I\nnterface: " + interfaceFisica;
+        +"\nInterface: " + interfaceFisica;
     }
 }
