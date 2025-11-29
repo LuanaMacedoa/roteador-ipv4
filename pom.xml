@@ -15,7 +15,6 @@
     </properties>
 
     <dependencies>
-        <!-- Lombok Dependency -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
