@@ -5,9 +5,10 @@
 **Disciplina:** Programação Orientada a Objetos (POO)
 **Professor:** Frederico Costa Guedes Pereira
 
-**Componentes do grupo:**
-Luana Gabriella Pereira Macedo (20242370026)
-Vinícius Ares Monteiro de Lima (20242370007)
+**Componentes da dupla:**
+
+- Luana Gabriella Pereira Macedo (20242370026)
+- Vinícius Ares Monteiro de Lima (20242370007)
 
 ## Sobre o Projeto
 
