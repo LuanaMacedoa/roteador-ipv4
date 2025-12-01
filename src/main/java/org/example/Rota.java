@@ -10,7 +10,8 @@ public class Rota {
     private String rotaDestino;
     private String gateway;
     private String mascara;
-    private String interfaceFisica;
+    private InterfaceFisica interfaceFisica;
+
 
     @Override
     public String toString() {
