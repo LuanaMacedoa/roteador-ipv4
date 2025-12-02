@@ -18,6 +18,6 @@ public class Rota {
         return "Rota de Destino: " + rotaDestino
         + " | Gateway: " + gateway
         + " | Máscara: " + mascara
-        + " | Interface: " + interfaceFisica;
+        + " | Interface: " + interfaceFisica.getNome();
     }
 }

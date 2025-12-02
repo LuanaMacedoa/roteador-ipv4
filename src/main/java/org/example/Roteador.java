@@ -2,6 +2,7 @@ package org.example;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -58,13 +59,17 @@ public class Roteador {
         if (destino == null || mask == null) {
             return false;
         }
-        // percorre e remove
-        for (Rota r : tabela.getRotas()) {
+
+        Iterator<Rota> it = tabela.getRotas().iterator();
+        while (it.hasNext()) {
+            Rota r = it.next();
             if (r.getRotaDestino().equals(destino) && r.getMascara().equals(mask)) {
-                tabela.getRotas().remove(r);
+                it.remove(); // remove de forma segura
                 return true;
             }
         }
+
+
         return false; // rota não encontrada
     }
     public void listarRotas() {
