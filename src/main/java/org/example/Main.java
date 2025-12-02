@@ -1,42 +1,96 @@
 package org.example;
 
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
-
-        // Cria a tabela de rotas
         TabelaRotas tabela = new TabelaRotas();
+        Scanner keyboard = new Scanner(System.in);
+        int opcao = 0;
 
-        // Cria interfaces físicas (dessa vez com a classe interfaceFIsica e nao apenas a string)
-        InterfaceFisica eth0 = new InterfaceFisica("eth0", "192.168.1.2");
+        while (opcao != 5) {
+            exibirMenu();
+            opcao = keyboard.nextInt();
+            keyboard.nextLine();
 
-        // Cria rotas usando InterfaceFisica
-        Rota r1 = new Rota("0.0.0.0", "192.168.1.1", "0.0.0.0", eth0);
-        Rota r2 = new Rota("192.168.1.0", "0.0.0.0", "255.255.255.0", eth0);
-        Rota r3 = new Rota("192.168.1.100", "192.168.1.1", "255.255.255.255", eth0);
-        Rota r4 = new Rota("10.0.0.0", "192.168.1.254", "255.0.0.0", eth0);
+            if (opcao == 1) {
+                System.out.println("\n--- Adicionar Nova Rota ---");
+                
+                System.out.print("IP de Destino: ");
+                String destino = keyboard.nextLine();
+                
+                System.out.print("Gateway: ");
+                String gateway = keyboard.nextLine();
+                
+                System.out.print("Máscara: ");
+                String mascara = keyboard.nextLine();
+                
+                System.out.print("Nome da Interface: ");
+                String nomeInterface = keyboard.nextLine();
+                
+                System.out.print("IP da Interface: ");
+                String ipInterface = keyboard.nextLine();
 
-        // Adiciona rotas na tabela
-        tabela.adicionarRota(r1);
-        tabela.adicionarRota(r2);
+                InterfaceFisica iface = new InterfaceFisica(nomeInterface, ipInterface);
+                Rota novaRota = new Rota(destino, gateway, mascara, iface);
+                
+                tabela.adicionarRota(novaRota);
+                pausar(keyboard);
+                
+            } else if (opcao == 2) {
+                tabela.exibirTabela();
+                pausar(keyboard);
+                
+            } else if (opcao == 3) {
+                tabela.exibirTabela();
+                
+                if (!tabela.getRotas().isEmpty()) {
+                    System.out.print("\nDigite o número da rota a remover: ");
+                    int numero = keyboard.nextInt();
+                    keyboard.nextLine();
+                    tabela.apagarRota(numero);
+                }
+                
+                pausar(keyboard);
+                
+            } else if (opcao == 4) {
+                tabela.apagarTabela();
+                pausar(keyboard);
+                
+            } else if (opcao == 5) {
+                System.out.println("\nEncerrando...");
+                
+            } else {
+                System.out.println("\nOpçao inválida! Tente novamente.");
+                pausar(keyboard);
+            }
+        }
 
-        // Testa duplicação
-        tabela.adicionarRota(r2); // deve exibir mensagem de rota duplicada
+        keyboard.close();
+    }
 
-        tabela.adicionarRota(r3);
-        tabela.adicionarRota(r4);
+    private static void exibirMenu() {
+        limparTela();
+        System.out.println("========================================");
+        System.out.println("          ROTEADOR IPv4 - MENU");
+        System.out.println("========================================");
+        System.out.println("1 - Adicionar Rota");
+        System.out.println("2 - Exibir Tabela de Rotas");
+        System.out.println("3 - Remover Rota");
+        System.out.println("4 - Apagar Toda a Tabela");
+        System.out.println("5 - Sair");
+        System.out.println("========================================");
+        System.out.print("Escolha um numero: ");
+    }
 
-        // Exibe tabela completa
-        tabela.exibirTabela();
+    private static void pausar(Scanner scanner) {
+        System.out.print("\nPressione ENTER para continuar...");
+        scanner.nextLine();
+    }
 
-        // Remove rota pelo índice
-        tabela.apagarRota(2); // remove a segunda rota
-        tabela.apagarRota(7); // índice inválido
-
-        // Exibe tabela novamente
-        tabela.exibirTabela();
-
-        // Apaga toda a tabela
-        tabela.apagarTabela();
-        tabela.exibirTabela();
+    private static void limparTela() {
+        for (int i = 0; i < 50; i++) {
+            System.out.println();
+        }
     }
 }
