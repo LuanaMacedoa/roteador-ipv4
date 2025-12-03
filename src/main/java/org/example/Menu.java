@@ -1,5 +1,6 @@
 package org.example;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Menu {
@@ -19,29 +20,59 @@ public class Menu {
             opcao = keyboard.nextInt();
             keyboard.nextLine();
 
+
+
             switch (opcao) {
                 case 1:
                     System.out.println("\n--- Adicionar Nova Rota ---");
-                    
+
                     System.out.print("IP de Destino: ");
                     String destino = keyboard.nextLine();
-                    
+
                     System.out.print("Gateway: ");
                     String gateway = keyboard.nextLine();
-                    
+
                     System.out.print("Máscara: ");
                     String mascara = keyboard.nextLine();
-                    
+
                     System.out.print("Nome da Interface: ");
                     String nomeInterface = keyboard.nextLine();
-                    
+
                     System.out.print("IP da Interface: ");
                     String ipInterface = keyboard.nextLine();
 
-                    InterfaceFisica iface = new InterfaceFisica(nomeInterface, ipInterface);
-                    Rota novaRota = new Rota(destino, gateway, mascara, iface);
-                    
-                    tabela.adicionarRota(novaRota);
+                    Roteador roteador = new Roteador(new ArrayList<>(), tabela, false);
+
+                    boolean okInterface = roteador.cadastrarInterface(nomeInterface, ipInterface);
+
+                    if (!okInterface) {
+                        System.out.println("Erro: interface inválida ou já existe.");
+                        pausar();
+                        break;
+                    }
+
+                    // 2. Buscar a interface cadastrada para usar na rota
+                    InterfaceFisica iface = roteador.getInterfaces()
+                            .stream()
+                            .filter(i -> i.getNome().equals(nomeInterface))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (iface == null) {
+                        System.out.println("Erro inesperado: interface não encontrada.");
+                        pausar();
+                        break;
+                    }
+
+                    // 3. Cadastrar a rota pelo Roteador (com validação)
+                    boolean okRota = roteador.cadastrarRota(destino, mascara, gateway, iface);
+
+                    if (okRota) {
+                        System.out.println("Rota cadastrada com sucesso!");
+                    } else {
+                        System.out.println("Erro ao cadastrar rota.");
+                    }
+
                     pausar();
                     break;
                     
