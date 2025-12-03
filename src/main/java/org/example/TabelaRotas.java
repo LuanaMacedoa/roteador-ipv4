@@ -18,7 +18,7 @@ public class TabelaRotas {
     public void adicionarRota(Rota novaRota) {
         if (rotaDuplicada(novaRota)) {
             System.out.println(Personalizar.VERMELHO + "\nRota duplicada! Já existe uma rota para " + 
-            novaRota.getRotaDestino() + "/" + novaRota.getMascara() + Personalizar.RESET);
+            novaRota.getIpDestino() + "/" + novaRota.getMascara() + Personalizar.RESET);
         } else {
             this.rotas.add(novaRota);
         System.out.println(Personalizar.VERDE + "\nNova rota adicionada! " + Personalizar.RESET + "-> " + Personalizar.SUBLINHADO + novaRota + Personalizar.RESET);
@@ -28,7 +28,7 @@ public class TabelaRotas {
     // INFO: metodo verifica se a rota e duplicada antes de inserir
     private boolean rotaDuplicada(Rota novaRota) {
         for (Rota r : rotas) {
-            if (novaRota.getRotaDestino().equals(r.getRotaDestino()) && novaRota.getMascara().equals(r.getMascara())) {
+            if (novaRota.getIpDestino().equals(r.getIpDestino()) && novaRota.getMascara().equals(r.getMascara())) {
                 return true;
             }
         }
@@ -48,7 +48,7 @@ public class TabelaRotas {
                 Rota r = rotas.get(i);
                 System.out.printf(Personalizar.FUNDO_PRETO + "%-4d | %-18s | %-18s | %-18s | %-15s%n" + Personalizar.RESET, 
                     i + 1, 
-                    r.getRotaDestino(), 
+                    r.getIpDestino(), 
                     r.getMascara(), 
                     r.getGateway(), 
                     r.getInterfaceFisica());
@@ -77,7 +77,57 @@ public class TabelaRotas {
             return;
         } else {
             Rota removida = rotas.remove(numero - 1);
-            System.out.println(Personalizar.VERDE + "\nRota removida: " + Personalizar.RESET + Personalizar.SUBLINHADO + removida.getRotaDestino() + " via " + removida.getInterfaceFisica() + "\n" + Personalizar.RESET);
+            System.out.println(Personalizar.VERDE + "\nRota removida: " + Personalizar.RESET + Personalizar.SUBLINHADO + removida.getIpDestino() + " via " + removida.getInterfaceFisica() + "\n" + Personalizar.RESET);
         }
+    }
+    
+    // INFO: Longest Prefix Match - encontra a rota mais específica para um IP destino
+    public Rota buscarRotaLPM(String ipDestino) {
+        long ipDest = ipParaLong(ipDestino);
+        Rota melhorRota = null;
+        int maiorPrefixo = -1;
+        
+        for (Rota r : rotas) {
+            long redeDestino = ipParaLong(r.getIpDestino());
+            long mascara = ipParaLong(r.getMascara());
+            
+            // Verifica se o IP destino pertence a essa rede
+            if ((ipDest & mascara) == (redeDestino & mascara)) {
+                int prefixo = contarBitsMascara(mascara);
+                
+                // Escolhe a rota com maior prefixo (mais específica)
+                if (prefixo > maiorPrefixo) {
+                    maiorPrefixo = prefixo;
+                    melhorRota = r;
+                }
+            }
+        }
+        
+        return melhorRota;
+    }
+    
+    // Converte IP string para long (ex: "192.168.1.1" -> número)
+    private long ipParaLong(String ip) {
+        String[] octetos = ip.split("\\.");
+        long resultado = 0;
+        
+        for (int i = 0; i < 4; i++) {
+            resultado = (resultado << 8) | Long.parseLong(octetos[i]);
+        }
+        
+        return resultado;
+    }
+    
+    // Conta quantos bits 1 tem na máscara (tamanho do prefixo)
+    private int contarBitsMascara(long mascara) {
+        int count = 0;
+        for (int i = 31; i >= 0; i--) {
+            if (((mascara >> i) & 1) == 1) {
+                count++;
+            } else {
+                break; // Para quando encontra o primeiro 0
+            }
+        }
+        return count;
     }
 }

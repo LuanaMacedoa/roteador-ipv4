@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 
 public class Rota {
-    private String rotaDestino;
+    private String ipDestino;
     private String gateway;
     private String mascara;
     private InterfaceFisica interfaceFisica;
@@ -15,7 +15,7 @@ public class Rota {
 
     @Override
     public String toString() {
-        return "Rota de Destino: " + rotaDestino
+        return "Rota de Destino: " + ipDestino
         + " | Gateway: " + gateway
         + " | Máscara: " + mascara
         + " | Interface: " + interfaceFisica.getNome();

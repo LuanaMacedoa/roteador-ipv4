@@ -47,7 +47,7 @@ public class Roteador {
         }
         // procura rota existente
         for (Rota r : tabela.getRotas()) {
-            if (r.getRotaDestino().equals(destino) && r.getMascara().equals(mask)) {
+            if (r.getIpDestino().equals(destino) && r.getMascara().equals(mask)) {
                 r.setGateway(novoGateway);
                 r.setInterfaceFisica(novaIface);
                 return true;
@@ -63,7 +63,7 @@ public class Roteador {
         Iterator<Rota> it = tabela.getRotas().iterator();
         while (it.hasNext()) {
             Rota r = it.next();
-            if (r.getRotaDestino().equals(destino) && r.getMascara().equals(mask)) {
+            if (r.getIpDestino().equals(destino) && r.getMascara().equals(mask)) {
                 it.remove(); // remove de forma segura
                 return true;
             }
@@ -84,7 +84,7 @@ public class Roteador {
                 mascaraExibida = "/" + UtilsIP.mascaraParaCIDR(r.getMascara());
             }
             System.out.println(
-                    "Destino: " + r.getRotaDestino() +
+                    "Destino: " + r.getIpDestino() +
                             " | Máscara: " + mascaraExibida +
                             " | Gateway: " + r.getGateway() +
                             " | Interface: " + r.getInterfaceFisica().getNome()
@@ -94,7 +94,7 @@ public class Roteador {
     public Rota rotear(String ip) {
         if (ip == null) return null;
         for (Rota r : tabela.getRotas()) {
-            if (UtilsIP.ipPertenceARede(ip, r.getRotaDestino(), r.getMascara())) {
+            if (UtilsIP.ipPertenceARede(ip, r.getIpDestino(), r.getMascara())) {
                 return r;
             }
         }

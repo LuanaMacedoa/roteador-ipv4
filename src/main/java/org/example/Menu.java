@@ -128,9 +128,9 @@ public class Menu {
         System.out.println("\n--- Alterar Rota ---");
         System.out.println("Deixe em branco para manter o valor atual");
         
-        System.out.print("Novo IP de Destino [" + rotaAntiga.getRotaDestino() + "]: ");
+        System.out.print("Novo IP de Destino [" + rotaAntiga.getIpDestino() + "]: ");
         String destino = keyboard.nextLine();
-        if (destino.isEmpty()) destino = rotaAntiga.getRotaDestino();
+        if (destino.isEmpty()) destino = rotaAntiga.getIpDestino();
         
         System.out.print("Novo Gateway [" + rotaAntiga.getGateway() + "]: ");
         String gateway = keyboard.nextLine();
@@ -165,7 +165,7 @@ public class Menu {
         
         for (int i = 0; i < tabela.getRotas().size(); i++) {
             Rota r = tabela.getRotas().get(i);
-            if (r.getRotaDestino().equals(ip)) {
+            if (r.getIpDestino().equals(ip)) {
                 System.out.println("\nRota #" + (i + 1) + ":");
                 System.out.println(r);
                 encontrou = true;
