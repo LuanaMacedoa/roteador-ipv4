@@ -81,7 +81,7 @@ public class Roteador {
         }
 
 
-        return false; // rota não encontrada
+        return false;
     }
     public void listarRotas() {
         if (tabela.getRotas().isEmpty()) {

@@ -1,7 +1,7 @@
 package org.example;
 
 public class UtilsIP {
-    // para converter a mascara em /24 ou / 16...
+
     public static int mascaraParaCIDR(String mask){
         String[] partes = mask.split("\\.");
         int cidr = 0;
@@ -19,7 +19,6 @@ public class UtilsIP {
         return (ipInt & maskInt) == (destInt & maskInt);
     }
 
-    // Converte IP String "192.168.0.1" para int
     public static int ipToInt(String ip) {
         String[] partes = ip.split("\\.");
         int resultado = 0;
@@ -29,7 +28,6 @@ public class UtilsIP {
         return resultado;
     }
 
-    // Converte máscara String "255.255.255.0" para int
     public static int mascaraToInt(String mask) {
         String[] partes = mask.split("\\.");
         int resultado = 0;

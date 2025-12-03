@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 public class TabelaRotas {
     private List<Rota> rotas = new ArrayList<>();
 
-    // INFO: metodo para adicionar uma rota na tabela de rotas
     public void adicionarRota(Rota novaRota) {
         if (rotaDuplicada(novaRota)) {
             System.out.println(Personalizar.VERMELHO + "\nRota duplicada! Já existe uma rota para " + 
@@ -25,7 +24,6 @@ public class TabelaRotas {
         } 
     }
 
-    // INFO: metodo verifica se a rota e duplicada antes de inserir
     private boolean rotaDuplicada(Rota novaRota) {
         for (Rota r : rotas) {
             if (novaRota.getIpDestino().equals(r.getIpDestino()) && novaRota.getMascara().equals(r.getMascara())) {
@@ -35,7 +33,6 @@ public class TabelaRotas {
         return false;
     }
 
-    // INFO: metodo de exibir a tabela toda
     public void exibirTabela() {
         if (rotas.isEmpty()) {
             System.out.println(Personalizar.VERMELHO + "Nenhuma rota cadastrada..." + Personalizar.RESET);
@@ -57,7 +54,7 @@ public class TabelaRotas {
             System.out.println(Personalizar.AZUL + "Total de rotas: " + Personalizar.RESET + Personalizar.SUBLINHADO + rotas.size() + Personalizar.RESET);
         }
     }
-    // INFO: metodo para limpar a tabela de rotas
+
     public void apagarTabela() {
         if (rotas.isEmpty()) {
             System.out.println(Personalizar.VERMELHO + "Tabela já está vazia." + Personalizar.RESET);
@@ -67,7 +64,7 @@ public class TabelaRotas {
         }
     }
     
-    // INFO: metodo que apaga apenas 1 rota
+
     public void apagarRota(int numero) {
         if (rotas.isEmpty()) {
             System.out.println("Tabela vazia, nenhuma rota para remover.");
@@ -81,7 +78,7 @@ public class TabelaRotas {
         }
     }
     
-    // INFO: Longest Prefix Match - encontra a rota mais específica para um IP destino
+
     public Rota buscarRotaLPM(String ipDestino) {
         long ipDest = ipParaLong(ipDestino);
         Rota melhorRota = null;
@@ -105,8 +102,7 @@ public class TabelaRotas {
         
         return melhorRota;
     }
-    
-    // Converte IP string para long (ex: "192.168.1.1" -> número)
+
     private long ipParaLong(String ip) {
         String[] octetos = ip.split("\\.");
         long resultado = 0;
@@ -117,15 +113,14 @@ public class TabelaRotas {
         
         return resultado;
     }
-    
-    // Conta quantos bits 1 tem na máscara (tamanho do prefixo)
+
     private int contarBitsMascara(long mascara) {
         int count = 0;
         for (int i = 31; i >= 0; i--) {
             if (((mascara >> i) & 1) == 1) {
                 count++;
             } else {
-                break; // Para quando encontra o primeiro 0
+                break;
             }
         }
         return count;
