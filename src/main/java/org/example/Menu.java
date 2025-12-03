@@ -211,8 +211,7 @@ public class Menu {
         System.out.print("Digite o IP que deseja rotear: ");
         String ip = keyboard.nextLine();
 
-        Rota rota = roteador.rotear(ip); // usa UtilsIP por dentro
-
+        Rota rota = roteador.rotear(ip);
         if (rota == null) {
             System.out.println("Nenhuma rota encontrada para esse IP.");
         } else {

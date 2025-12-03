@@ -12,7 +12,6 @@ public class Rota {
     private String mascara;
     private InterfaceFisica interfaceFisica;
 
-
     @Override
     public String toString() {
         return "Rota de Destino: " + ipDestino
