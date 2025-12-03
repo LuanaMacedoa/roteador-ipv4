@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.estilo.Personalizar;
 import java.util.Scanner;
 
 public class Menu {
@@ -57,7 +58,7 @@ public class Menu {
                     break;
 
                 default:
-                    System.out.println("\nOpção inválida!");
+                    System.out.println(Personalizar.VERMELHO + "\nOpção inválida!" + Personalizar.RESET);
                     pausar();
             }
         }
@@ -89,9 +90,9 @@ public class Menu {
 
         boolean ok = roteador.cadastrarInterface(nome, ip);
         if (ok)
-            System.out.println("Interface cadastrada com sucesso!");
+            System.out.println(Personalizar.VERDE + "Interface cadastrada com sucesso!" + Personalizar.RESET);
         else
-            System.out.println("Erro ao cadastrar interface (duplicada ou IP inválido)");
+            System.out.println(Personalizar.VERMELHO + "Erro ao cadastrar interface (duplicada ou IP inválido)" + Personalizar.RESET);
 
         pausar();
     }
@@ -99,7 +100,7 @@ public class Menu {
     private void cadastrarRota() {
         System.out.println("\n--- Cadastro de Rota ---");
         if (roteador.getInterfaces().isEmpty()) {
-            System.out.println("Nenhuma interface cadastrada! Cadastre uma primeiro.");
+            System.out.println(Personalizar.VERMELHO + "Nenhuma interface cadastrada! Cadastre uma primeiro." + Personalizar.RESET);
             pausar();
             return;
         }
@@ -122,7 +123,7 @@ public class Menu {
                 .orElse(null);
 
         if (iface == null) {
-            System.out.println("Interface não encontrada!");
+            System.out.println(Personalizar.VERMELHO + "Interface não encontrada!" + Personalizar.RESET);
             pausar();
             return;
         }
@@ -130,16 +131,18 @@ public class Menu {
         boolean ok = roteador.cadastrarRota(dest, mask, gateway, iface);
 
         if (ok)
-            System.out.println("Rota cadastrada com sucesso!");
+            System.out.println(Personalizar.VERDE + "Rota cadastrada com sucesso!" + Personalizar.RESET);
         else
-            System.out.println("Erro ao cadastrar rota.");
+            System.out.println(Personalizar.VERMELHO + "Erro ao cadastrar rota." + Personalizar.RESET);
 
         pausar();
     }
 
     private void exibirTabela() {
-        System.out.println("\n--- Tabela de Rotas ---");
+        System.out.println(Personalizar.FUNDO_PRETO + Personalizar.BRANCO + "\n--- Tabela de Rotas ---" + Personalizar.RESET);
+        System.out.print(Personalizar.FUNDO_PRETO + Personalizar.BRANCO);
         roteador.listarRotas();
+        System.out.print(Personalizar.RESET);
         pausar();
     }
 
@@ -154,15 +157,15 @@ public class Menu {
         String resposta = keyboard.nextLine();
 
         if (!resposta.equalsIgnoreCase("S")) {
-            System.out.println("Operação cancelada.");
+            System.out.println(Personalizar.AMARELO + "Operação cancelada." + Personalizar.RESET);
             pausar();
             return;
         }
         boolean ok = roteador.removerRota(dest, mask);
         if (ok)
-            System.out.println("Rota removida!");
+            System.out.println(Personalizar.VERDE + "Rota removida!" + Personalizar.RESET);
         else
-            System.out.println("Rota não encontrada.");
+            System.out.println(Personalizar.VERMELHO + "Rota não encontrada." + Personalizar.RESET);
 
         pausar();
 
@@ -190,7 +193,7 @@ public class Menu {
                 .orElse(null);
 
         if (iface == null) {
-            System.out.println("Interface não encontrada!");
+            System.out.println(Personalizar.VERMELHO + "Interface não encontrada!" + Personalizar.RESET);
             pausar();
             return;
         }
@@ -198,9 +201,9 @@ public class Menu {
         boolean ok = roteador.alterarRota(dest, mask, novoGate, iface);
 
         if (ok)
-            System.out.println("Rota alterada com sucesso!");
+            System.out.println(Personalizar.VERDE + "Rota alterada com sucesso!" + Personalizar.RESET);
         else
-            System.out.println("Rota não encontrada!");
+            System.out.println(Personalizar.VERMELHO + "Rota não encontrada!" + Personalizar.RESET);
 
         pausar();
     }
@@ -213,7 +216,7 @@ public class Menu {
 
         Rota rota = roteador.rotear(ip);
         if (rota == null) {
-            System.out.println("Nenhuma rota encontrada para esse IP.");
+            System.out.println(Personalizar.VERMELHO + "Nenhuma rota encontrada para esse IP." + Personalizar.RESET);
         } else {
             String maskExibida = rota.getMascara();
             if (roteador.isExibirCIDR()) {
@@ -250,9 +253,9 @@ public class Menu {
 
         if (resposta.equals("S")) {
             roteador.getTabela().getRotas().clear();
-            System.out.println("Tabela de rotas resetada com sucesso!");
+            System.out.println(Personalizar.VERDE + "Tabela de rotas resetada com sucesso!" + Personalizar.RESET);
         } else {
-            System.out.println("Operação cancelada.");
+            System.out.println(Personalizar.AMARELO + "Operação cancelada." + Personalizar.RESET);
         }
 
         pausar();
