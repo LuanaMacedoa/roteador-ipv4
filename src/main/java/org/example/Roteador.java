@@ -2,6 +2,7 @@ package org.example;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,6 +14,12 @@ public class Roteador {
     List<InterfaceFisica> interfaces;
     TabelaRotas tabela;
     boolean exibirCIDR;
+
+    public Roteador() {
+        this.interfaces = new ArrayList<>();
+        this.tabela = new TabelaRotas();
+        this.exibirCIDR = false;
+    }
 
     public boolean cadastrarInterface(String nome, String ip){
         if (nome == null || nome.isEmpty()){
@@ -34,7 +41,12 @@ public class Roteador {
     public boolean cadastrarRota(String destino, String mask, String gateway, InterfaceFisica iface ) {
         if (destino == null || mask == null || gateway == null || iface == null) {
             return false;
-        } // impede duplicação de rotas com o mesmo destino
+        }
+        for (Rota r : tabela.getRotas()) {
+            if (r.getIpDestino().equals(destino) && r.getMascara().equals(mask)) {
+                return false;
+            }
+        }
         Rota rotaNova = new Rota(destino, gateway, mask, iface);
         tabela.adicionarRota(rotaNova);
         return true;
@@ -45,7 +57,6 @@ public class Roteador {
         if (destino == null || mask == null || novoGateway == null || novaIface == null) {
             return false;
         }
-        // procura rota existente
         for (Rota r : tabela.getRotas()) {
             if (r.getIpDestino().equals(destino) && r.getMascara().equals(mask)) {
                 r.setGateway(novoGateway);
@@ -53,7 +64,7 @@ public class Roteador {
                 return true;
             }
         }
-        return false; // rota não encontrada
+        return false;
     }
     public boolean removerRota(String destino, String mask) {
         if (destino == null || mask == null) {
@@ -64,7 +75,7 @@ public class Roteador {
         while (it.hasNext()) {
             Rota r = it.next();
             if (r.getIpDestino().equals(destino) && r.getMascara().equals(mask)) {
-                it.remove(); // remove de forma segura
+                it.remove();
                 return true;
             }
         }
@@ -77,10 +88,10 @@ public class Roteador {
             System.out.println("Nenhuma rota cadastrada.");
             return;
         }
+
         for (Rota r : tabela.getRotas()) {
             String mascaraExibida = r.getMascara();
             if (exibirCIDR) {
-                // converte máscara para /CIDR ADICIONAR CLASS UTILSIP
                 mascaraExibida = "/" + UtilsIP.mascaraParaCIDR(r.getMascara());
             }
             System.out.println(
@@ -92,12 +103,18 @@ public class Roteador {
         }
     }
     public Rota rotear(String ip) {
-        if (ip == null) return null;
+        Rota melhorRota = null;
+        int maiorPrefixo = -1;
+
         for (Rota r : tabela.getRotas()) {
             if (UtilsIP.ipPertenceARede(ip, r.getIpDestino(), r.getMascara())) {
-                return r;
+                int cidr = UtilsIP.mascaraParaCIDR(r.getMascara());
+                if (cidr > maiorPrefixo) {
+                    maiorPrefixo = cidr;
+                    melhorRota = r;
+                }
             }
         }
-        return null; // nenhuma rota encontrada
+        return melhorRota;
     }
 }

@@ -1,14 +1,14 @@
 package org.example;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Menu {
-    private TabelaRotas tabela;
+
+    private Roteador roteador;
     private Scanner keyboard;
 
-    public Menu() {
-        this.tabela = new TabelaRotas();
+    public Menu(Roteador roteador) {
+        this.roteador = roteador;
         this.keyboard = new Scanner(System.in);
     }
 
@@ -20,193 +20,242 @@ public class Menu {
             opcao = keyboard.nextInt();
             keyboard.nextLine();
 
-
-
             switch (opcao) {
+
                 case 1:
-                    System.out.println("\n--- Adicionar Nova Rota ---");
-
-                    System.out.print("IP de Destino: ");
-                    String destino = keyboard.nextLine();
-
-                    System.out.print("Gateway: ");
-                    String gateway = keyboard.nextLine();
-
-                    System.out.print("Máscara: ");
-                    String mascara = keyboard.nextLine();
-
-                    System.out.print("Nome da Interface: ");
-                    String nomeInterface = keyboard.nextLine();
-
-                    System.out.print("IP da Interface: ");
-                    String ipInterface = keyboard.nextLine();
-
-                    Roteador roteador = new Roteador(new ArrayList<>(), tabela, false);
-
-                    boolean okInterface = roteador.cadastrarInterface(nomeInterface, ipInterface);
-
-                    if (!okInterface) {
-                        System.out.println("Erro: interface inválida ou já existe.");
-                        pausar();
-                        break;
-                    }
-
-                    // 2. Buscar a interface cadastrada para usar na rota
-                    InterfaceFisica iface = roteador.getInterfaces()
-                            .stream()
-                            .filter(i -> i.getNome().equals(nomeInterface))
-                            .findFirst()
-                            .orElse(null);
-
-                    if (iface == null) {
-                        System.out.println("Erro inesperado: interface não encontrada.");
-                        pausar();
-                        break;
-                    }
-
-                    // 3. Cadastrar a rota pelo Roteador (com validação)
-                    boolean okRota = roteador.cadastrarRota(destino, mascara, gateway, iface);
-
-                    if (okRota) {
-                        System.out.println("Rota cadastrada com sucesso!");
-                    } else {
-                        System.out.println("Erro ao cadastrar rota.");
-                    }
-
-                    pausar();
+                    cadastrarInterfaceFisica();
                     break;
-                    
+
                 case 2:
-                    tabela.exibirTabela();
-                    pausar();
+                    cadastrarRota();
                     break;
-                    
+
                 case 3:
-                    tabela.exibirTabela();
-                    
-                    if (!tabela.getRotas().isEmpty()) {
-                        System.out.print("\nDigite o número da rota a remover: ");
-                        int numero = keyboard.nextInt();
-                        keyboard.nextLine();
-                        tabela.apagarRota(numero);
-                    }
-                    
-                    pausar();
+                    exibirTabela();
                     break;
-                    
+
                 case 4:
+                    removerRota();
+                    break;
+
+                case 5:
                     alterarRota();
                     break;
-                    
-                case 5:
+
+                case 6:
                     buscarRotaPorIP();
                     break;
-                    
-                case 6:
-                    tabela.apagarTabela();
-                    pausar();
-                    break;
-                    
+
                 case 7:
                     System.out.println("\nEncerrando...");
                     break;
-                    
-                default:
-                    System.out.println("\nOpção inválida! Tente novamente.");
-                    pausar();
+                case 8:
+                    alternarExibicao();
                     break;
+                case 9:
+                    resetarTabela();
+                    break;
+
+                default:
+                    System.out.println("\nOpção inválida!");
+                    pausar();
             }
         }
-
-        keyboard.close();
     }
 
     private void exibirMenu() {
         System.out.println("\n========================================");
         System.out.println("          ROTEADOR IPv4 - MENU");
         System.out.println("========================================");
-        System.out.println("1 - Adicionar Rota");
-        System.out.println("2 - Exibir Tabela de Rotas");
-        System.out.println("3 - Remover Rota");
-        System.out.println("4 - Alterar Rota");
-        System.out.println("5 - Buscar Rota por IP");
-        System.out.println("6 - Apagar Toda a Tabela");
+        System.out.println("1 - Cadastrar Interface Física");
+        System.out.println("2 - Cadastrar Nova Rota");
+        System.out.println("3 - Exibir Tabela de Rotas");
+        System.out.println("4 - Remover Rota");
+        System.out.println("5 - Alterar Rota");
+        System.out.println("6 - Buscar Rota por Destino");
         System.out.println("7 - Sair");
+        System.out.println("8 - Alternar exibição Máscara ↔ CIDR");
+        System.out.println("9- Resetar Tabela de Rotas");
         System.out.println("========================================");
         System.out.print("Escolha uma opção: ");
     }
 
-    private void alterarRota() {
-        tabela.exibirTabela();
-        
-        if (tabela.getRotas().isEmpty()) {
-            pausar();
-            return;
-        }
-        
-        System.out.print("\nDigite o número da rota a alterar: ");
-        int numero = keyboard.nextInt();
-        keyboard.nextLine();
-        
-        if (numero < 1 || numero > tabela.getRotas().size()) {
-            System.out.println("\nÍndice inválido!");
-            pausar();
-            return;
-        }
-        
-        Rota rotaAntiga = tabela.getRotas().get(numero - 1);
-        
-        System.out.println("\n--- Alterar Rota ---");
-        System.out.println("Deixe em branco para manter o valor atual");
-        
-        System.out.print("Novo IP de Destino [" + rotaAntiga.getIpDestino() + "]: ");
-        String destino = keyboard.nextLine();
-        if (destino.isEmpty()) destino = rotaAntiga.getIpDestino();
-        
-        System.out.print("Novo Gateway [" + rotaAntiga.getGateway() + "]: ");
-        String gateway = keyboard.nextLine();
-        if (gateway.isEmpty()) gateway = rotaAntiga.getGateway();
-        
-        System.out.print("Nova Máscara [" + rotaAntiga.getMascara() + "]: ");
-        String mascara = keyboard.nextLine();
-        if (mascara.isEmpty()) mascara = rotaAntiga.getMascara();
-        
-        System.out.print("Novo Nome da Interface [" + rotaAntiga.getInterfaceFisica().getNome() + "]: ");
-        String nomeInterface = keyboard.nextLine();
-        if (nomeInterface.isEmpty()) nomeInterface = rotaAntiga.getInterfaceFisica().getNome();
-        
-        System.out.print("Novo IP da Interface [" + rotaAntiga.getInterfaceFisica().getEnderecoIP() + "]: ");
-        String ipInterface = keyboard.nextLine();
-        if (ipInterface.isEmpty()) ipInterface = rotaAntiga.getInterfaceFisica().getEnderecoIP();
-        
-        InterfaceFisica iface = new InterfaceFisica(nomeInterface, ipInterface);
-        Rota novaRota = new Rota(destino, gateway, mascara, iface);
-        
-        tabela.getRotas().set(numero - 1, novaRota);
-        System.out.println("\nRota alterada com sucesso!");
+    private void cadastrarInterfaceFisica() {
+        System.out.println("\n--- Cadastro de Interface Física ---");
+        System.out.print("Nome da interface: ");
+        String nome = keyboard.nextLine();
+        System.out.print("Endereço IP: ");
+        String ip = keyboard.nextLine();
+
+        boolean ok = roteador.cadastrarInterface(nome, ip);
+        if (ok)
+            System.out.println("Interface cadastrada com sucesso!");
+        else
+            System.out.println("Erro ao cadastrar interface (duplicada ou IP inválido)");
+
         pausar();
     }
-    
+
+    private void cadastrarRota() {
+        System.out.println("\n--- Cadastro de Rota ---");
+        if (roteador.getInterfaces().isEmpty()) {
+            System.out.println("Nenhuma interface cadastrada! Cadastre uma primeiro.");
+            pausar();
+            return;
+        }
+        System.out.print("Destino: ");
+        String dest = keyboard.nextLine();
+
+        System.out.print("Máscara: ");
+        String mask = keyboard.nextLine();
+
+        System.out.print("Gateway: ");
+        String gateway = keyboard.nextLine();
+
+        System.out.print("Nome da Interface usada: ");
+        String nomeIface = keyboard.nextLine();
+
+        InterfaceFisica iface = roteador.getInterfaces()
+                .stream()
+                .filter(i -> i.getNome().equalsIgnoreCase(nomeIface))
+                .findFirst()
+                .orElse(null);
+
+        if (iface == null) {
+            System.out.println("Interface não encontrada!");
+            pausar();
+            return;
+        }
+
+        boolean ok = roteador.cadastrarRota(dest, mask, gateway, iface);
+
+        if (ok)
+            System.out.println("Rota cadastrada com sucesso!");
+        else
+            System.out.println("Erro ao cadastrar rota.");
+
+        pausar();
+    }
+
+    private void exibirTabela() {
+        System.out.println("\n--- Tabela de Rotas ---");
+        roteador.listarRotas();
+        pausar();
+    }
+
+    private void removerRota() {
+        System.out.println("\n--- Remover Rota ---");
+
+        System.out.print("Destino da rota: ");
+        String dest = keyboard.nextLine();
+        System.out.print("Máscara: ");
+        String mask = keyboard.nextLine();
+        System.out.print("Tem certeza que deseja remover esta rota? [S/N]: ");
+        String resposta = keyboard.nextLine();
+
+        if (!resposta.equalsIgnoreCase("S")) {
+            System.out.println("Operação cancelada.");
+            pausar();
+            return;
+        }
+        boolean ok = roteador.removerRota(dest, mask);
+        if (ok)
+            System.out.println("Rota removida!");
+        else
+            System.out.println("Rota não encontrada.");
+
+        pausar();
+
+    }
+
+    private void alterarRota() {
+        System.out.println("\n--- Alterar Rota ---");
+
+        System.out.print("Destino da rota existente: ");
+        String dest = keyboard.nextLine();
+
+        System.out.print("Máscara existente: ");
+        String mask = keyboard.nextLine();
+
+        System.out.print("Novo gateway: ");
+        String novoGate = keyboard.nextLine();
+
+        System.out.print("Nome da nova interface: ");
+        String nomeIface = keyboard.nextLine();
+
+        InterfaceFisica iface = roteador.getInterfaces()
+                .stream()
+                .filter(i -> i.getNome().equalsIgnoreCase(nomeIface))
+                .findFirst()
+                .orElse(null);
+
+        if (iface == null) {
+            System.out.println("Interface não encontrada!");
+            pausar();
+            return;
+        }
+
+        boolean ok = roteador.alterarRota(dest, mask, novoGate, iface);
+
+        if (ok)
+            System.out.println("Rota alterada com sucesso!");
+        else
+            System.out.println("Rota não encontrada!");
+
+        pausar();
+    }
+
     private void buscarRotaPorIP() {
-        System.out.print("\nDigite o IP de destino para buscar: ");
+        System.out.println("\n--- Buscar Rota por IP (roteamento real) ---");
+
+        System.out.print("Digite o IP que deseja rotear: ");
         String ip = keyboard.nextLine();
-        
-        boolean encontrou = false;
-        System.out.println("\n--- Rotas Encontradas ---");
-        
-        for (int i = 0; i < tabela.getRotas().size(); i++) {
-            Rota r = tabela.getRotas().get(i);
-            if (r.getIpDestino().equals(ip)) {
-                System.out.println("\nRota #" + (i + 1) + ":");
-                System.out.println(r);
-                encontrou = true;
+
+        Rota rota = roteador.rotear(ip); // usa UtilsIP por dentro
+
+        if (rota == null) {
+            System.out.println("Nenhuma rota encontrada para esse IP.");
+        } else {
+            String maskExibida = rota.getMascara();
+            if (roteador.isExibirCIDR()) {
+                maskExibida = "/" + UtilsIP.mascaraParaCIDR(rota.getMascara());
             }
+
+            System.out.println("\nRota encontrada:");
+            System.out.println("(" +
+                    rota.getIpDestino() + ", " +
+                    rota.getGateway() + ", " +
+                    maskExibida + ", " +
+                    rota.getInterfaceFisica().getNome() +
+                    ")");
         }
-        
-        if (!encontrou) {
-            System.out.println("\nNenhuma rota encontrada para o IP: " + ip);
+
+        pausar();
+    }
+
+    private void alternarExibicao() {
+        roteador.setExibirCIDR(!roteador.isExibirCIDR());
+
+        if (roteador.isExibirCIDR()) {
+            System.out.println("Agora as rotas serão exibidas em notação CIDR (/24, /30...).");
+        } else {
+            System.out.println("Agora as rotas serão exibidas com máscara completa (255.255.255.0).");
         }
-        
+
+        pausar();
+    }
+    private void resetarTabela() {
+        System.out.println("\n--- Resetar Tabela de Rotas ---");
+        System.out.print("Tem certeza que deseja apagar todas as rotas? [S/N]: ");
+        String resposta = keyboard.nextLine().trim().toUpperCase();
+
+        if (resposta.equals("S")) {
+            roteador.getTabela().getRotas().clear();
+            System.out.println("Tabela de rotas resetada com sucesso!");
+        } else {
+            System.out.println("Operação cancelada.");
+        }
+
         pausar();
     }
 
